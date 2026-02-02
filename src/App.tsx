@@ -1,34 +1,43 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import OrderList from './compoentes/OrderList'
+import OrderSummary from './compoentes/OrderSummary'
+
+type Order = {
+  id: number
+  name: string
+  price: number
+}
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [orders, setOrders] = useState<Order[]>([])
+
+  const addOrder = () => {
+    const newOrder: Order = {
+      id: Date.now(),
+      name: '아메리카노',
+      price: 4500,
+    }
+
+    setOrders([...orders, newOrder])
+  }
+
+  const removeOrder = (id: number) => {
+    setOrders(orders.filter(order=>order.id !== id))
+  }
+
+  const totalPrice = orders.reduce((sum, order) => {
+    return sum + order.price
+  }, 0)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>POS SYSTEM</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{ padding: 20 }}>
+      <h1>POS Playground</h1>
+
+      <button onClick={addOrder} >주문 추가</button>
+
+      <OrderList orders={orders} onRemove={removeOrder}/>
+      <OrderSummary totalPrice={totalPrice} />
+    </div>
   )
 }
 
